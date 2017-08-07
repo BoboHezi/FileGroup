@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomVideoSeekBar">
+        <attr name="backcolor" format="color"></attr>
+        <attr name="backheight" format="dimension"></attr>
+        <attr name="progresscolor" format="color"></attr>
+        <attr name="progressheight" format="dimension"></attr>
+        <attr name="textcolor" format="color"></attr>
+        <attr name="textheight" format="dimension"></attr>
+        <attr name="totaltime" format="integer"></attr>
+    </declare-styleable>
+
+</resources>
