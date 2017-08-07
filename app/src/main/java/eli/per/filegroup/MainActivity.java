@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import java.io.IOException;
 import eli.per.view.CustomListView;
 
+/**
+ * author Eli Chang And Fei Wei
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
     private static final String TAG = "MainActivity";
