@@ -50,7 +50,7 @@ public abstract class BaseDialog extends Dialog {
     public void show() {
         super.show();
         Window window = getWindow();
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
         lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
         lp.gravity = Gravity.CENTER;
