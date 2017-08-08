@@ -55,7 +55,7 @@ public class CustomActionDialog extends BaseDialog implements View.OnClickListen
     public void show() {
         super.show();
         Window window = getWindow();
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
         lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         lp.gravity = Gravity.BOTTOM;
