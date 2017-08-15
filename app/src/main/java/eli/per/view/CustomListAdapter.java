@@ -73,7 +73,6 @@ public class CustomListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         ItemView itemView ;
 
         if (convertView == null) {
@@ -86,12 +85,10 @@ public class CustomListAdapter extends BaseAdapter {
         } else {
             itemView = (ItemView) convertView.getTag();
         }
-
         if (isFirst.get(position) == null || isFirst.get(position)) {
             convertView.startAnimation(animation);
             isFirst.put(position, false);
         }
-
         itemView.itemTime.setText((String) data.get(position).get("time"));
         itemView.itemThumbnail.setImageBitmap((Bitmap)data.get(position).get("image"));
 

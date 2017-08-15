@@ -1,14 +1,22 @@
 package eli.per.view;
 
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+
 import java.util.Random;
 
 public class CirclePoint extends View {
+
+    private int color;
+    //插值器
+    private static final TimeInterpolator interpolator = new DecelerateInterpolator();
 
     public CirclePoint(Context context) {
         this(context, null);
@@ -21,6 +29,7 @@ public class CirclePoint extends View {
 
     public CirclePoint(Context context, AttributeSet attributeSet, int defStyleAttr) {
         super(context, attributeSet, defStyleAttr);
+        color = getColor();
     }
 
     @Override
@@ -35,12 +44,40 @@ public class CirclePoint extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        int width = Math.min(getMeasuredHeight(), getMeasuredWidth());
 
         Paint paint = new Paint();
-        paint.setColor(getColor());
+        paint.setColor(color);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(getMeasuredWidth() / 2, getMeasuredHeight() / 2, getMeasuredHeight() / 2, paint);
+        canvas.drawCircle(width / 2, width / 2, width / 2, paint);
+    }
+
+    /**
+     * 设置被选中的状态
+     */
+    public void setFoucs() {
+        color = Color.parseColor("#ff0000");
+        this.animate().scaleX(2.0f).scaleY(2.0f).setDuration(200).setInterpolator(interpolator);
+        postInvalidate();
+    }
+
+    /**
+     * 设置未被选中的状态
+     */
+    public void setDismiss() {
+        color = Color.parseColor("#777777");
+        this.animate().scaleX(2.0f).scaleY(2.0f).setDuration(200).setInterpolator(interpolator);
+        postInvalidate();
+    }
+
+    /**
+     * 取消多选状态
+     */
+    public void reset() {
+        color = getColor();
+        this.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).setInterpolator(interpolator);
+        postInvalidate();
     }
 
     /**

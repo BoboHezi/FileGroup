@@ -3,6 +3,7 @@ package eli.per.filegroup;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.ThumbnailUtils;
 import android.os.Handler;
 import android.os.Message;
@@ -92,14 +93,14 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
      * 点击某一条记录触发事件
      * @param adapterView
      * @param view
-     * @param i
-     * @param l
+     * @param position
+     * @param id
      */
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (isLongClick)
             return;
-        File file = files.get(i);
+        File file = files.get(position);
         selectedFile = file;
 
         if (checkFileType(file) == FileType.PHOTO) {
@@ -113,11 +114,17 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
         }
     }
 
+    /**
+     * 长按事件
+     * @param adapterView
+     * @param view
+     * @param position
+     * @param id
+     * @return
+     */
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        selectedFile = files.get(i);
-        CustomDeleteDialog deleteDialog = new CustomDeleteDialog(context, refreshHandler);
-        deleteDialog.show();
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        view.setBackgroundColor(Color.BLACK);
         return true;
     }
 
