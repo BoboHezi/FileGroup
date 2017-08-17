@@ -1,16 +1,16 @@
 package eli.per.filegroup;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.ThumbnailUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import eli.per.view.CustomDeleteDialog;
 import eli.per.view.CustomListAdapter;
 import eli.per.view.CustomPhotoDialog;
 import eli.per.view.CustomListView;
@@ -41,6 +40,7 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
     private Context context;
     private RefreshHandler refreshHandler;
     private CustomListView fileListView;
+    private LinearLayout bottomBar;
     private CustomListAdapter fileListAdapter;
     private List<Map<String, Object>> list;
     private List<File> files = new ArrayList<>();
@@ -48,13 +48,17 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
 
     private CustomPhotoDialog photoDialog;
     private CustomVideoDialog videoDialog;
+    private List<Integer> selectedItems;
 
     private boolean isLongClick = false;
     private static final int pageCount = 5;
 
-    public LoadListView(Context context, CustomListView listView) {
+    public LoadListView(Context context, Activity activity) {
         this.context = context;
-        this.fileListView = listView;
+
+        this.fileListView = activity.findViewById(R.id.filelist);
+        this.bottomBar = activity.findViewById(R.id.bottomBar);
+
         this.fileListView.setOnItemClickListener(this);
         this.fileListView.setOnItemLongClickListener(this);
         this.fileListView.setLoadMoreListener(this);
@@ -98,18 +102,19 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (isLongClick)
+        //当目前处于长按状态，或者有被选中的状态，则不响应单击事件
+        if ((selectedItems != null && selectedItems.size() > 0) || isLongClick)
             return;
-        File file = files.get(position);
-        selectedFile = file;
 
-        if (checkFileType(file) == FileType.PHOTO) {
+        selectedFile = files.get(position);
+
+        if (checkFileType(selectedFile) == FileType.PHOTO) {
             //点击图片文件
-            photoDialog = new CustomPhotoDialog(context, file, refreshHandler);
+            photoDialog = new CustomPhotoDialog(context, selectedFile, refreshHandler);
             photoDialog.show();
-        }else if (checkFileType(file) == FileType.VIDEO) {
+        }else if (checkFileType(selectedFile) == FileType.VIDEO) {
             //点击视频文件
-            videoDialog = new CustomVideoDialog(context, file, refreshHandler);
+            videoDialog = new CustomVideoDialog(context, selectedFile, refreshHandler);
             videoDialog.show();
         }
     }
@@ -124,7 +129,28 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
      */
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        view.setBackgroundColor(Color.BLACK);
+        if (selectedItems == null) {
+            selectedItems = new ArrayList<>();
+        }
+
+        if (selectedItems.contains(position)) {
+            //当列表中存在该Item，移除
+            selectedItems.remove(selectedItems.indexOf(position));
+        } else {
+            //当列表中不存在该Item，添加
+            selectedItems.add(position);
+        }
+
+        //更新选中的Item
+        notifySelected();
+
+        //当目前存在被选中的Item，则显示底部的按钮框，否则隐藏
+        float dip40 = dip2px(context, 40) - 2;
+        if (selectedItems.size() > 0) {
+            bottomBar.animate().translationY(-dip40).setDuration(300).start();
+        } else {
+            bottomBar.animate().translationY(2).setDuration(300).start();
+        }
         return true;
     }
 
@@ -135,7 +161,6 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
     private void deleteFileFromView(File file) {
         if (file != null) {
             int index = files.indexOf(file);
-            Log.i(TAG, "Delete This File." + file.getName());
             if (checkFileType(file) == FileType.PHOTO && photoDialog != null && photoDialog.isShowing()) {
                 photoDialog.dismiss();
             } else if (checkFileType(file) == FileType.VIDEO && videoDialog != null && videoDialog.isShowing()) {
@@ -145,6 +170,11 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
             fileListAdapter.removeItem(index);
             //从文件列表中删除记录
             files.remove(index);
+            //如果该文件处于选中的状态，则需要更新
+            if (selectedItems.contains(index)) {
+                selectedItems.remove(selectedItems.indexOf(index));
+                notifySelected();
+            }
             selectedFile = null;
         }
     }
@@ -173,6 +203,14 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
         } else {
             return FileType.OTHER;
         }
+    }
+
+    /**
+     * 更新被选中的Item
+     */
+    private void notifySelected() {
+        fileListAdapter.setSelectedItem(selectedItems);
+        fileListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -296,5 +334,16 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
         bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, kind);
         bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
         return bitmap;
+    }
+
+    /**
+     * Dip转像素
+     * @param context
+     * @param dpValue
+     * @return
+     */
+    public float dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (dpValue * scale + 0.5f);
     }
 }

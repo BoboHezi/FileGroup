@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,18 +21,18 @@ public class CustomListAdapter extends BaseAdapter {
     private static final String TAG = "ListAdapter";
 
     private List<Map<String, Object>> data;
-    private int size;
     private LayoutInflater inflater;
-    private Context context;
     private Animation animation;
     private Map<Integer, Boolean> isFirst;
+    private List<Integer> selectedItem;
+    private int size;
 
     public CustomListAdapter(Context context, List<Map<String, Object>> data) {
-        this.context = context;
         this.data = data;
         this.inflater = LayoutInflater.from(context);
         this.animation = AnimationUtils.loadAnimation(context, R.anim.anim_item_enter);
         this.isFirst = new HashMap<>();
+        this.selectedItem = new ArrayList<>();
     }
 
     public final class ItemView {
@@ -92,6 +93,20 @@ public class CustomListAdapter extends BaseAdapter {
         itemView.itemTime.setText((String) data.get(position).get("time"));
         itemView.itemThumbnail.setImageBitmap((Bitmap)data.get(position).get("image"));
 
+        if (selectedItem.contains(position)) {
+            itemView.typeColor.setFocus();
+        } else {
+            itemView.typeColor.setDismiss();
+        }
+
         return convertView;
+    }
+
+    /**
+     * 设置被选中的记录
+     * @param selectedItem
+     */
+    public void setSelectedItem(List<Integer> selectedItem) {
+        this.selectedItem = selectedItem;
     }
 }

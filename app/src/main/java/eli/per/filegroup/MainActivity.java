@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
 
-    private CustomListView fileList;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private MediaPlayer mediaPlayer;
@@ -32,12 +31,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
         //设置List
-        loadListView = new LoadListView(this, fileList);
+        loadListView = new LoadListView(this, this);
         loadListView.loadFiles();
     }
 
     private void initView() {
-        fileList = (CustomListView) findViewById(R.id.filelist);
         surfaceView = (SurfaceView) findViewById(R.id.video);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.setKeepScreenOn(true);
