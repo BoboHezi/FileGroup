@@ -16,9 +16,9 @@ public abstract class BaseDialog extends Dialog {
 
     public final String TAG = this.getClass().getName();
 
-    public Context context;
-    public TextView timeText;
-    public File file;
+    private Context context;
+    protected TextView timeText;
+    protected File file;
     private LoadListView.RefreshHandler refreshHandler;
 
     public BaseDialog(Context context, File file, LoadListView.RefreshHandler refreshHandler, int style) {
@@ -31,14 +31,14 @@ public abstract class BaseDialog extends Dialog {
     /**
      * 初始化视图，必须在子类中重写
      */
-    public abstract void initView();
+    protected abstract void initView();
 
-    public abstract void setWindowAnimation();
+    protected abstract void setWindowAnimation();
 
     /**
      * 弹出对话框
      */
-    public void showActionDialog() {
+    protected void showActionDialog() {
         CustomActionDialog actionDialog = new CustomActionDialog(context,file, refreshHandler);
         actionDialog.show();
     }
@@ -60,7 +60,7 @@ public abstract class BaseDialog extends Dialog {
     /**
      * 设置时间
      */
-    public void showTime() {
+    protected void showTime() {
         if (timeText != null) {
             Date date = new Date(file.lastModified());
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");

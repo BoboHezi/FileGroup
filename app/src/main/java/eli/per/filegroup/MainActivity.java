@@ -12,7 +12,7 @@ import java.io.IOException;
 import eli.per.view.CustomListView;
 
 /**
- * author Eli Chang And Fei Wei
+ * author Eli Chang
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
