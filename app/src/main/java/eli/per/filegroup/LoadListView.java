@@ -171,7 +171,7 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
             //从文件列表中删除记录
             files.remove(index);
             //如果该文件处于选中的状态，则需要更新
-            if (selectedItems.contains(index)) {
+            if (selectedItems != null && selectedItems.contains(index)) {
                 selectedItems.remove(selectedItems.indexOf(index));
                 notifySelected();
             }
@@ -274,12 +274,18 @@ public class LoadListView implements CustomListView.OnLoadMoreListener, AdapterV
                     thumbnail = getVideoThumbnail(file.getPath(), 500, 350, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
                 }
 
-                map.put("time", time);
-                map.put("image", thumbnail);
+                if (thumbnail != null) {
+                    map.put("time", time);
+                    map.put("image", thumbnail);
 
-                //添加数据至数据集合
-                list.add(map);
-                refreshHandler.sendEmptyMessage(HANDLER_STATE_REFRESH);
+                    //添加数据至数据集合
+                    list.add(map);
+                    refreshHandler.sendEmptyMessage(HANDLER_STATE_REFRESH);
+                } else {
+                    files.remove(i);
+                    end --;
+                    i -- ;
+                }
             }
             fileListView.setLoadState(CustomListView.LOAD_STATE_NON_LOADING);
         }

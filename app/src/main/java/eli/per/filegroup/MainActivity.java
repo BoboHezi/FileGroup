@@ -9,7 +9,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
 import java.io.IOException;
-import eli.per.view.CustomListView;
 
 /**
  * author Eli Chang
